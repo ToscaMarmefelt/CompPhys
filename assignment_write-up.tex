@@ -1,0 +1,165 @@
+%%% Preamble
+\documentclass[paper=a4, fontsize=11pt]{scrartcl}
+\usepackage[T1]{fontenc}
+\usepackage{fourier}
+
+\usepackage[english]{babel}															% English language/hyphenation
+\usepackage[protrusion=true,expansion=true]{microtype}	
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[pdftex]{graphicx}	
+\usepackage{url}
+
+
+%%% Custom sectioning
+\usepackage{sectsty}
+\allsectionsfont{\centering \normalfont\scshape}
+
+
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}											% No page header
+\fancyfoot[L]{}											% Empty 
+\fancyfoot[C]{}											% Empty
+\fancyfoot[R]{\thepage}									% Pagenumbering
+\renewcommand{\headrulewidth}{0pt}			% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+\usepackage{bbold}
+
+
+%%% Equation and float numbering
+%\numberwithin{equation}{section}		% Equationnumbering: section.eq#
+%\numberwithin{figure}{section}			% Figurenumbering: section.fig#
+%\numberwithin{table}{section}				% Tablenumbering: section.tab#
+
+
+%%% Maketitle metadata
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 	% Horizontal rule
+
+\title{
+		%\vspace{-1in} 	
+		\usefont{OT1}{bch}{b}{n}
+		\normalfont \normalsize \textsc{Department of Physics $|$ Imperial College London} \\ [25pt]
+		\horrule{0.5pt} \\[0.4cm]
+		\huge Computational Physics: Assignment \\
+		\horrule{2pt} \\[0.5cm]
+}
+\author{
+		\normalfont 								\normalsize
+        Tosca Cederberg Marmefelt\\[-3pt]		\normalsize
+        CID: $01204044$\\[-3pt]		\normalsize
+        \today
+}
+\date{}
+
+
+%%% Begin document
+\begin{document}
+\maketitle
+\section{Floating point variables}
+
+\begin{center}
+	\label{fact2}
+	\begin{tabular}{l || c | c | c | c | c }
+		\textbf{Precision} & \textbf{Sign} & \textbf{Mantissa} & \textbf{Exponent} & \textbf{Total} & \textbf{Numpy Data Type} \\ \hline \hline
+		Half & $1$ bit & $10$ bits & $5$ bits & $16$ bits & \textit{float16} \\ \hline 
+		Single & $1$ bit & $23$ bits & $8$ bits & $32$ bits & \textit{float32} \\ \hline 
+		Double & $1$ bit & $52$ bits & $11$ bits & $64$ bits & \textit{float64} \\ \hline 
+		Extended & $1$ bit & $112$ bits & $15$ bits & $128$ bits & Not available in Python
+	\end{tabular}
+\end{center}
+
+\begin{center}
+	\label{result2}
+	\begin{tabular}{l || c | c}
+	\textbf{Precision} & \textbf{Machine Accuracy}  & \textbf{Smallest Value Meaningfully Subtracted from $1$}\\ \hline \hline
+	Half & $0.0009765625$ & $0.00048828125$ \\ \hline
+	Single & $1.1920928955078125 \times 10^{-7}$ & $ 5.960464477539063 \times 10^{-8}$\\ \hline
+	Dounble & $2.220446049250313 \times 10^{-16}$ & $1.1102230246251565 \times 10^{-16}$
+	\end{tabular}
+\end{center}
+From Table \ref{result2}, it is clear that
+%\begin{align} 
+%	\begin{split}
+%	(x+y)^3 	&= (x+y)^2(x+y)\\
+%					&=(x^2+2xy+y^2)(x+y)\\
+%					&=(x^3+2x^2y+xy^2) + (x^2y+2xy^2+y^3)\\
+%					&=x^3+3x^2y+3xy^2+y^3
+%	\end{split}					
+%\end{align}
+
+
+\section{Matrix methods}
+
+\begin{align}
+\label{A define}
+	A = 
+	\begin{bmatrix}
+	3 & 1 & 0 & 0 & 0 \\
+  	3 & 9 & 4 & 0 & 0 \\
+  	0 & 9 & 20 & 10 & 0 \\
+  	0 & 0 & -22 & 31 & -25 \\
+  	0 & 0 & 0 & -55 & 60
+	\end{bmatrix}
+\end{align}
+
+\begin{align}	
+	A \equiv LU =
+		\begin{bmatrix}
+	3 & 1 & 0 & 0 & 0 \\
+	1 & 8 & 4 & 0 & 0 \\
+	0 & 1.13 & 15.5 & 10 & 0 \\
+	0 & 0 & -1.42 & 45.2 & -25 \\
+	0 & 0 & 0 & -1.22 & 29.6
+	\end{bmatrix}
+\end{align}
+
+\begin{equation}
+\text{det}(A) = answer
+\end{equation}
+
+\begin{align}
+\label{matrix equation}
+A \textbf{x} \equiv LU \textbf{x} = 
+	\begin{bmatrix}
+	2 \\
+	5 \\
+	-4 \\
+	8 \\
+	9
+	\end{bmatrix}
+\end{align}
+
+In order to calculate the inverse of our matrix $A$, we recall the fact that
+\begin{equation}
+A^{-1} A = \mathbb{1} \text{ ,}
+\end{equation}
+where $\mathbb{1}$ is the $N \times N$ identity matrix. For the matrix defined in \ref{A define}, this allows us to set up $N$ equations of the type
+\begin{equation}
+A^{-1}\text{[\textit{n}] } LU = \mathbb{1}\text{[\textit{n}]} \text{ ,}
+\end{equation}
+for each of the $n = 0, 1, ... , (N-1)$ columns in $A^{-1}$. Recognising that this is the same type of equation as that set up in Equation \ref{matrix equation}, we can use the same routine to loop through each column in $A^{-1}$ to find 
+
+\begin{align}
+\label{A define}
+A^{-1} = 
+\begin{bmatrix}
+3 & 1 & 0 & 0 & 0 \\
+3 & 9 & 4 & 0 & 0 \\
+0 & 9 & 20 & 10 & 0 \\
+0 & 0 & -22 & 31 & -25 \\
+0 & 0 & 0 & -55 & 60
+\end{bmatrix} \text{ . enter correct matrix here}
+\end{align}
+
+\section{Interpolation}
+
+
+\section{Fourier transforms}
+
+
+\section{Random numbers}
+%%% End document
+\end{document}
