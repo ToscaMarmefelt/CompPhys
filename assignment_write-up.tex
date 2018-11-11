@@ -26,7 +26,9 @@
 \renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
 \setlength{\headheight}{13.6pt}
 
+%Added by me
 \usepackage{bbold}
+\usepackage{graphicx}
 
 
 %%% Equation and float numbering
@@ -155,8 +157,21 @@ A^{-1} =
 \end{align}
 
 \section{Interpolation}
+\subsection{Linear interpolation}
+Recalling that a linear function may be written as 
+\begin{equation}
+f(x) = kx + m \text{ ,}
+\end{equation}
+for constants $k$ and $m$, we may define a linear function $f_{i}(x)$ between each pair of points $i$ and $(i+1)$ for $i = 0, 1, ... , (N-2)$, where $N$ is the number of data points. Each linear function is specified by $k_{i}$ and $m_{i}$. When plotting the interpolated function for a set of $x$-values, which function $f_{i}(x)$ to call is determined depending on which interval $[x_{i}, x_{i+1}]$ the value $x$ lies in, as is illustrated in Figure \ref{interpolation theory}. 
+\begin{figure}
+	\centering
+	\includegraphics[width=10cm]{interpolation_theory.pdf}
+	\caption{\footnotesize{Simple example of $N=5$ data points $(x_{i}, y_{i})$ for $i = 0, 1, ... , (N-1)$. An interpolating function $f_{i}$ has been defined between each pair of points $i$ and $(i+1)$. The red arrows indicate which function $f_{i}$ to call when plotting the interpolated function over a greater number of $x$-values in the specified range.}}
+	\label{interpolation theory}
+\end{figure}
 
-
+\subsection{Cubic spline interpolation}
+hej
 \section{Fourier transforms}
 
 
