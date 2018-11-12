@@ -20,28 +20,18 @@ def decompose(myMatrix):
         
         #BETA
         for i in range(j+1):
-#            print( 'beta (i,j)=(', i,',', j, ')')
             mySumB = 0
             for k in range(i):
-#                print('b: i=', i,'j=', j, 'k=', k)
                 mySumB += myMatrix[i][k] * myMatrix[k][j]
             myMatrix[i][j] = ( myMatrix[i][j] - mySumB )
-#            print('mySumB=', mySumB)
-#            print('New entry: ', myMatrix[i][j], '\n')
-
          
         #ALPHA
         for i in range((j+1),len(myMatrix)):
-#            print('alpha (i,j)=(', i,',', j, ')')
             mySumA = 0
             for k in range(j):
-#                print('a: i=', i,'j=', j, 'k=', k)
                 mySumA += myMatrix[i][k] * myMatrix[k][j]
-#            print('myMatrix[j][j]=', myMatrix[j][j], 'myMatrix[i][j]=', myMatrix[i][j])
             myMatrix[i][j] = ( 1/myMatrix[j][j] * myMatrix[i][j] -mySumA )
-#            print('mySumA=', mySumA)
-#            print('New entry: ', myMatrix[i][j], '\n')
-    
+
     return myMatrix
 
 # Calculate the determinant of a square (already decomposed) matrix A=L*U
@@ -70,7 +60,6 @@ def solveEquation(L, U, b):
         for j in range(i-1):
             sumY += L[i][j] * y[j]
         y.append( 1./L[i][i] * (b[i] - sumY) )
-#    print('y =', y)
         
     #Backward substitution to solve for x (from Ux=y)
     x = []
@@ -78,14 +67,12 @@ def solveEquation(L, U, b):
     
     for i in range( (len(b)-2), -1, -1 ):   # i=3, 2, 1, 0 for our b
         sumX = 0
+        
         for j in range(i,len(b)):
-#            print('x = ', x)
-#            print('(i, j) = (', i, ',',j, ')')
-#            print('U[i][j]=', U[i][j], 'and x[j]=', x[j]) 
             sumX += U[i][j] * x[j-len(b)+1]
         x.insert(0, ( 1./U[i][i] * (y[i] - sumX) ))
     
-    # Return list of 
+    # Return list  defining vector x that satisfies LUx = b
     return x
         
 
@@ -105,6 +92,9 @@ print('L*U = \n', lu)
 print('det(A) = ', determinant)
 
 
+""" Define functions makeL/U that take out upper and lower matricies from our product 
+    matrix A=LU above to facilitate answering Question 3. 
+"""
 #LOWER
 def makeL(lu):
     matrixL = np.identity(len(lu))
@@ -119,21 +109,13 @@ def makeU(lu):
         matrixU[i][i:] = lu[i][i:]
     return matrixU
 
-#print('matrixL = \n', matrixL)
-#print('matrixU = \n', matrixU) 
 
 bVector = np.array([2., 5., -4., 8., 9.])
 matrixL = makeL(lu)
 matrixU = makeU(lu)
-xVector = solveEquation( matrixL, matrixU, bVector )
+xVector = np.array(solveEquation( matrixL, matrixU, bVector ))
 
-#print('x = \n', xVector)
-#x = [-0.26810222024018593, 
-#       1.0999144334855182, 
-#       -0.49543663973599689, 
-#       0.041044412500957146, 
-#       0.30430795221431156]
-
+print('x = \n',xVector)
 
 """ Use routines above to calculate the inverse of A
 """
@@ -144,6 +126,7 @@ inverseA = [[],
             [] ]
 
 for j in range(len(matrixA)):       # For every column
+    
     # Pick out relevant column of identity matrix
     b_j = [0] * len(lu)
     b_j[j] = 1
@@ -153,5 +136,5 @@ for j in range(len(matrixA)):       # For every column
     for i in range(len(matrixA)):   # For every row
         inverseA[i].append(x_j[i]) 
 
-print('inverseA = ', inverseA)
+print('inverseA = \n', np.array(inverseA))
         
