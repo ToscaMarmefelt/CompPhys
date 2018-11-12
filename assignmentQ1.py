@@ -9,23 +9,23 @@ Created on Wed Oct 31 09:06:06 2018
 Write a short program to calculate the floating-point machine accuracy
 of your system. 
 
-Machine accuracy = smallest number that can be meaningfully +/- from 1
+Machine accuracy = smallest number that can be meaningfully added to AND subtracted from 1
 """
 
 import os
 import numpy as np
 
 
-system = os.name         # Maybe something else that says what hardware is being used
+system = os.name
 
 # Machine accuracy = smallest number meaningfully SUBTRACTED from 1
-def machine_accuracy_sub(precision):
-    x = precision(1/2)
-    lowest = x          
-    while (precision(1)-x) != precision(1):
-        lowest = x
-        x *= precision(1)/precision(2)
-    return lowest
+#def machine_accuracy_sub(precision):
+#    x = precision(1/2)
+#    lowest = x          
+#    while (precision(1)-x) != precision(1):
+#        lowest = x
+#        x *= precision(1)/precision(2)
+#    return lowest
 
 # Machine accuracy = smallest number meaningfully ADDED to 1
 def machine_accuracy_add(precision):
@@ -36,12 +36,15 @@ def machine_accuracy_add(precision):
         x *= precision(1)/precision(2)
     return lowest
 
+# =============================================================================
+# Answer Question 1
+# =============================================================================
 
 answer = [["Precision", "Machine Accuracy"],
            ["", ""],
-           ["Half", machine_accuracy_sub(np.float16)],
-           ["Single", machine_accuracy_sub(np.float32)],
-           ["Double", machine_accuracy_sub(np.float64)]]
+           ["Half", machine_accuracy_add(np.float16)],
+           ["Single", machine_accuracy_add(np.float32)],
+           ["Double", machine_accuracy_add(np.float64)]]
 
 # Print result 
 print('For Python running on a %s machine, the floating-point machine accuracy is the following: \n ' %system)
