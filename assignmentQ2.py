@@ -10,9 +10,9 @@ Carry out LU decomposition of an arbitrary NxN matrix using Crout's method.
 import numpy as np 
 
 
-""" Use Crout's method for decomposing a square matrix A into
-    an upper and a lower matrix.
-"""
+# =============================================================================
+# Use Crout's method to decompose a square matrix into an upper and a lower matrix
+# =============================================================================
 
 def decompose(myMatrix):
     
@@ -41,7 +41,6 @@ def decompose(myMatrix):
             myMatrix[i][j] = ( 1/myMatrix[j][j] * myMatrix[i][j] -mySumA )
 #            print('mySumA=', mySumA)
 #            print('New entry: ', myMatrix[i][j], '\n')
-
     
     return myMatrix
 
@@ -55,9 +54,11 @@ def detLU(matrix):
     return product
 
 
-""" Solve matrix equation LUx = b for vectors x,b
-    (Note that here the original matrix is overwritten as part of the function)
-"""
+
+# =============================================================================
+# Solve matrix equation LUx = b for vectors x, b
+# =============================================================================
+
 def solveEquation(L, U, b):
     
     #Forward substitution to solve for y (from Ly=b)
@@ -84,12 +85,14 @@ def solveEquation(L, U, b):
             sumX += U[i][j] * x[j-len(b)+1]
         x.insert(0, ( 1./U[i][i] * (y[i] - sumX) ))
     
+    # Return list of 
     return x
         
 
+# =============================================================================
+# Answer Question 2
+# =============================================================================
 
-""" Answer question 2 (b) 
-"""
 matrixA = np.array([[3., 1., 0., 0., 0.],
                    [3., 9., 4., 0., 0.],
                    [0., 9., 20., 10., 0.],
@@ -97,30 +100,34 @@ matrixA = np.array([[3., 1., 0., 0., 0.],
                    [0., 0., 0., -55., 60.]])
 
 lu = decompose(matrixA)
-determinant = detA(lu)
-#print('L*U = \n', lu)
-#print('det(A) = ', determinant
+determinant = detLU(lu)
+print('L*U = \n', lu)
+print('det(A) = ', determinant)
 
 
-""" Answer question 2 (d) 
-"""
 #LOWER
-matrixL = np.identity(len(lu))
-for i in range(len(lu)):
-    matrixL[i][0:i] = lu[i][0:i]        #Keep 1s on diagonal 
+def makeL(lu):
+    matrixL = np.identity(len(lu))
+    for i in range(len(lu)):
+        matrixL[i][0:i] = lu[i][0:i]        #Keep 1s on diagonal 
+    return matrixL
 
 #UPPER
-matrixU = np.identity(len(lu))
-for i in range(len(lu)):
-    matrixU[i][i:] = lu[i][i:]
+def makeU(lu):
+    matrixU = np.identity(len(lu))
+    for i in range(len(lu)):
+        matrixU[i][i:] = lu[i][i:]
+    return matrixU
 
 #print('matrixL = \n', matrixL)
 #print('matrixU = \n', matrixU) 
 
 bVector = np.array([2., 5., -4., 8., 9.])
+matrixL = makeL(lu)
+matrixU = makeU(lu)
 xVector = solveEquation( matrixL, matrixU, bVector )
 
-print('x = \n', xVector)
+#print('x = \n', xVector)
 #x = [-0.26810222024018593, 
 #       1.0999144334855182, 
 #       -0.49543663973599689, 
@@ -128,6 +135,23 @@ print('x = \n', xVector)
 #       0.30430795221431156]
 
 
-""" Answer question 2 (e)
+""" Use routines above to calculate the inverse of A
 """
+inverseA = [[], 
+            [], 
+            [], 
+            [], 
+            [] ]
 
+for j in range(len(matrixA)):       # For every column
+    # Pick out relevant column of identity matrix
+    b_j = [0] * len(lu)
+    b_j[j] = 1
+    
+    # Solve matrix equation LU*x_j = b_j
+    x_j = solveEquation(matrixL,matrixU, b_j)
+    for i in range(len(matrixA)):   # For every row
+        inverseA[i].append(x_j[i]) 
+
+print('inverseA = ', inverseA)
+        
