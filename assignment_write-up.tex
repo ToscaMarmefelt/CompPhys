@@ -29,6 +29,7 @@
 %Added by me
 \usepackage{bbold}
 \usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
 
 
 %%% Equation and float numbering
@@ -83,7 +84,7 @@ The machine accuracy for the three different precisions which are defined in Pyt
 	Dounble & $2.220446049250313 \times 10^{-16}$ & $1.1102230246251565 \times 10^{-16}$
 	\end{tabular}
 \end{center}
-As indicated in the result table above, the smallest number meaningfully added to $1$ (i.e. $1.000...01$) differs from the smallest value meaningfully subtracted from $1$ (i.e. $0.999...99$) by a factor of $2$. This is simply due to the fact that the most significant bit in the mantissa corresponding to $1.000...01$ is $2^{0}$, compared to $2^{-1}$ for $0.999...99$. Hence it follows that the smallest value meaningfully subtracted from $1$ is smaller than thad added to $1$ by a factor of $2$, as observed. Furthermore, the machine accuracy quoted above agrees with the expected values of $2^{-(mantissa)}$ for each precision. 
+As indicated in the result table above, the smallest number meaningfully added to $1$ (i.e. $1.000...01$) differs from the smallest value meaningfully subtracted from $1$ (i.e. $0.999...99$) by a factor of $2$. This is simply due to the fact that the most significant bit in the mantissa corresponding to $1.000...01$ is $2^{0}$, compared to $2^{-1}$ for $0.999...99$. Hence it follows that the smallest value meaningfully subtracted from $1$ is smaller than thad added to $1$ by a factor of $2$, as observed. Furthermore, the machine accuracy quoted above agrees with the expected values of $2^{-\text{(mantissa)}}$ for each precision. 
 
 
 
@@ -242,6 +243,44 @@ where $\mathcal{F}$ and $\mathcal{F}^{-1}$ indicate the Fourier transform and in
 Since the Fast Fourier Transform used in \url{numpy.fft} requires a sample size which is a factor of $2$, the respective functions were discretely sampled at $N=2^{6}$ evenly spaced values of $t$ in the range $t \in [-8,8]$. Hence there was no need for padding. 
 
 \section{Random numbers}
+\subsection{Uniform distribution}
+Using the uniformly distributed random number generator \url{random.random()} which provides a random number in the range $[0,1]$, a sample of $10^{5}$ deviates were generated. These are plotted in Figure \ref{random graph} (a), where the bin ranges were determined using the Freedman-Diaconis rule (minimising the difference in area under empirical and theoretical pdf) via the external  \url{astrophys.stats} library. 
+
+\subsection{Transformation method}
+Given the probability distribution function
+\begin{equation}
+\label{pdf trans}
+pdf(x) = \frac{1}{2} \sin(x) \text{ ,}
+\end{equation}
+and a uniformly distributed $x \in [0,\pi]$, the fundamental transformation law of probabilities allows us to define 
+\begin{equation}
+| P(y) dy | = |P(x) dx | \implies |\frac{1}{2} \sin{y} | = |U(x) dx| \text{ .}
+\end{equation}
+Assuming $\frac{dy}{dx} \geq 0$, then we may integrate and invert the result to find
+\begin{equation}
+y(x) = \arccos{ 1-2x }
+\end{equation}
+where $y(x)$ is a new deviate distributed according to the PDF defined in Equation \ref{pdf trans}. This is plotted for a sample of $10^{5}$ points in Figure \ref{random graph} (b). Again, the bin ranges were decided based on the Freedman-Diaconis rule. 
+
+\subsection{Rejection method}
+Now consider the PDF
+\begin{equation}
+\label{pdf rejec}
+pdf(x) = \frac{2}{\pi} \sin^{2}{x}
+\end{equation}
+again defined for a uniformly distributed $x \in [0,\pi]$. The comparison function was set to be $c(y) = \frac{2}{\pi} \sin{y}$ to ensure $c(y) > P(y)$ for all $y$ (where $P(y)$ is the PDF defined in Equation \ref{pdf rejec}). Normalising the comparison function to give $c_{norm}(y) = \frac{1}{2} \sin{y}$, we may pick the random deviate $y_{i}$ as
+\begin{equation}
+y_{i} = \arccos{\big( 1-2 \cdot \text{ \url{random.random()} } \big)} \text{ .}
+\end{equation}
+We then pick a random value $p_{i}$ in the range $[0, c(y_{i})]$ via
+\begin{equation}
+p_{i} = \frac{2}{\pi} \sin{(y_{i})} \cdot \text{\url{random-random()}} \text{ .}
+\end{equation}
+The deviates $y_{i}$ which satisfy $P(y_{i}) \geq p_{i}$ are then accepted by the rejection method. In Figure \ref{random graph}, $N=10^{5}$ such points are plotted. The efficiency of the rejection method is proportional to the time is takes to generate the $N$ accepted deviates. Comparing to the number of values which had to be generated to create the plot in Figure \ref{random graph} (b) (i.e. the same as the total number of accepted points in our rejection method), the efficiency of the rejection method was given by:
+\begin{equation}
+efficiency= 0.7870483326381073
+\end{equation}
+which is the same as the fraction of the area under the PDF in (c) compared to the area under the PDF in (b), as was expected. 
 
 \begin{figure}
 	\centering
